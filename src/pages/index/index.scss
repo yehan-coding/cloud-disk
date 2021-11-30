@@ -1,0 +1,19 @@
+.index-layout {
+  height: 100%;
+  .index-header {
+    background-color: #fff;
+    box-shadow: 0 3px 10px 0 rgb(0 0 0 / 6%);
+    height: 56px;
+    line-height: 56px;
+    padding: 0 30px;
+    z-index: 1;
+  }
+  .index-content {
+    background-color: #fff;
+    .file-name {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+  }
+}
