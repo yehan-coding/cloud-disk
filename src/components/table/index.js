@@ -25,7 +25,7 @@ const Table = (props) => {
                   column.map(({ dataIndex, width, render, click }) => {
                     return (
                       <div className="table-body-cell" style={{ width: width }}
-                        onClick={ () => click(row[dataIndex], row) }
+                        onClick={ () => click && click(row[dataIndex], row) }
                       >{
                         render ? render(row[dataIndex], row) : row[dataIndex] ? row[dataIndex] : '-'
                       }</div>

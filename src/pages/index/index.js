@@ -5,6 +5,9 @@ import { getFileList } from '@/api/index.js'
 import IconFile from '@/assets/ic_file.png'
 import IconOther from '@/assets/ic_other.png'
 import Table from '@/components/table'
+import { CloudDownloadOutlined } from '@ant-design/icons';
+
+const host = 'https://minio.zhangtong.work/yehan/'
 
 
 const { Header, Content } = Layout
@@ -20,20 +23,22 @@ const Index = () => {
       dataIndex: 'name',
       key: 'name',
       width: '70%',
-      render: (text, { isDir }) => {
+      render: (text, { isDir, name, uri }) => {
         return (
           <div className="file-name">
-            <img
-              style={{ width: '40px' }}
-              src={ isDir ? IconFile : IconOther }
-              alt=""
-            />
-            <span>{ text }</span>
+            <div className="name" onClick={ () => { showDir(isDir, name) } }>
+              <img
+                style={{ width: '40px' }}
+                src={ isDir ? IconFile : IconOther }
+                alt=""
+              />
+              <span>{ text }</span>
+            </div>
+            <div className={ `option ${!isDir ? 'show' : ''}` }>
+              <CloudDownloadOutlined style={{ fontSize: '16px' }} onClick={ () => downFile(uri) } />
+            </div>
           </div>
         )
-      },
-      click: (text, { isDir, uri }) => {
-        isDir ? showDir(text) : downFile(uri)
       }
     },
     {
@@ -54,15 +59,33 @@ const Index = () => {
     const { data } = await getFileList({
       prefix
     })
-    setTableSource(data.reverse())
+    setTableSource(data.reverse().map(item => ({ ...item, size: item.size ? getFileSize(item.size) : '' })))
   }
 
-  const showDir = (dir) => {
-    setPrefix(`${prefix + dir}/`)
+  const showDir = (isDir, name) => {
+    if (isDir) setPrefix(`${prefix + name}/`)
   }
 
   const downFile = (uri) => {
-    console.log(uri)
+    window.open(host + uri)
+  }
+
+  const getFileSize = (filesize) => {
+    if (filesize < 1024) {
+      return filesize + 'B'
+    } else if (filesize < (1024 * 1024)) {
+      let temp = filesize / 1024
+      temp = temp.toFixed(2)
+      return temp + 'KB'
+    } else if (filesize < (1024 * 1024 * 1024)) {
+      let temp = filesize / (1024 * 1024);
+      temp = temp.toFixed(2)
+      return temp + 'MB'
+    } else {
+      let temp = filesize / (1024 * 1024 * 1024)
+      temp = temp.toFixed(2)
+      return temp + 'GB'
+    }
   }
 
   useEffect(() => {
