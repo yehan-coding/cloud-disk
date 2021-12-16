@@ -1,4 +1,5 @@
 import Index from '../pages/index'
+import Login from '../pages/login'
 
 const routes = [
   {
@@ -7,7 +8,14 @@ const routes = [
     meta: {
       title: '首页'
     }
+  },
+  {
+    path: '/login',
+    component: Login,
+    meta: {
+      title: '登录'
+    }
   }
 ]
 
-export default routes
+export default routes.reverse()

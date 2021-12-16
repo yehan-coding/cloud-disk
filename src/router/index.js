@@ -1,5 +1,9 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import routes from './route.config'
+import Index from '../pages/index'
+import Login from '../pages/login'
+
+console.log(routes)
 
 const RouterView = () => {
   return (
