@@ -1,6 +1,5 @@
 import axios from 'axios'
-
-const bucketName = 'yehan'
+import { localStore } from '@/utils/StoreUtils'
 
 const service = axios.create({
   baseURL: '/api',
@@ -9,11 +8,9 @@ const service = axios.create({
 
 service.interceptors.request.use(
   config => {
-    const { params, data, method } = config
-    if (method.toLocaleLowerCase() === 'get') {
-      config.params = { ...params, bucketName }
-    } else if (method.toLocaleLowerCase() === 'post') {
-      config.data = { ...data, bucketName }
+    const token = localStore.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
     }
     return config
   },

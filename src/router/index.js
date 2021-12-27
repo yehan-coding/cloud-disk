@@ -1,22 +1,17 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 import routes from './route.config'
-import Index from '../pages/index'
-import Login from '../pages/login'
-
-console.log(routes)
 
 const RouterView = () => {
+  const token = localStorage.getItem('token')
   return (
     <Router>
-      <Switch>
-        {
-          routes.map(item =>
-            <Route path={ item.path } key={ item.path }>
-              <item.component />
-            </Route>
-          )
-        }
-      </Switch>
+      {
+        routes.map(item =>
+          <Route key={ item.path } {...item}>
+            { (item.path === '/login' || token) ? <item.component /> : <Redirect to="/login" /> }
+          </Route>
+        )
+      }
     </Router>
   )
 }

@@ -5,6 +5,7 @@ const routes = [
   {
     path: '/',
     component: Index,
+    exact: true,
     meta: {
       title: '首页'
     }
@@ -18,4 +19,4 @@ const routes = [
   }
 ]
 
-export default routes.reverse()
+export default routes

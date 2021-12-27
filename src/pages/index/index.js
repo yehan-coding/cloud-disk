@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
-import { Layout } from 'antd'
+import { useHistory } from 'react-router-dom'
+import { Layout, Spin, Breadcrumb } from 'antd'
 import './index.scss'
 import { getFileList } from '@/api/index.js'
 import IconFile from '@/assets/ic_file.png'
 import IconOther from '@/assets/ic_other.png'
 import Table from '@/components/table'
-import { CloudDownloadOutlined } from '@ant-design/icons';
+import { CloudDownloadOutlined, LogoutOutlined, CloudOutlined } from '@ant-design/icons'
+import { localStore } from '@/utils/StoreUtils'
 
 const host = 'https://minio.zhangtong.work/yehan/'
 
@@ -16,6 +18,10 @@ const Index = () => {
 
   const [prefix, setPrefix] = useState('')
   const [tableSource, setTableSource] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [breadcrumb, setBreadcrumb] = useState(['全部文件'])
+
+  const router = useHistory()
 
   const tableColumns = [
     {
@@ -56,9 +62,12 @@ const Index = () => {
   ]
 
   const fetchFileList = async () => {
+    setLoading(true)
     const { data } = await getFileList({
       prefix
     })
+    setLoading(false)
+    setBreadcrumb(['全部文件', ...prefix.split('/')])
     setTableSource(data.reverse().map(item => ({ ...item, size: item.size ? getFileSize(item.size) : '' })))
   }
 
@@ -88,16 +97,44 @@ const Index = () => {
     }
   }
 
+  const logout = () => {
+    localStore.removeItem('user')
+    localStore.removeItem('token')
+    router.replace('/login')
+  }
+
+  const handleBreadClick = (index) => {
+    const prefixArr = breadcrumb.slice(1, index + 1)
+    setPrefix(prefixArr && prefixArr.length > 0 ? `${prefixArr.join('/')}/` : '')
+  }
+
   useEffect(() => {
     fetchFileList()
   }, [prefix])
 
   return (
     <Layout className="index-layout">
-      <Header className="index-header"></Header>
+      <Header className="index-header">
+        <div className='logo'>
+          <CloudOutlined className='logo-icon' />
+          <span className='website-name'>个人网盘</span>
+        </div>
+        <div className='breadcrumb-box'>
+          <Breadcrumb>
+            {
+              breadcrumb.map((item, index) => <Breadcrumb.Item className='bread-item' onClick={ () => handleBreadClick(index) }>{ item }</Breadcrumb.Item>)
+            }
+          </Breadcrumb>
+        </div>
+        <div className='logout'>
+          <LogoutOutlined onClick={ () => logout() } />
+        </div>
+      </Header>
       <Layout className="index-content">
         <Content>
-          <Table source={ tableSource } column={ tableColumns } size="small" />
+          {
+            loading ? <Spin className='loading' size="middle" tip="数据加载中..." /> : <Table source={ tableSource } column={ tableColumns } size="small" />
+          }
         </Content>
       </Layout>
     </Layout>
