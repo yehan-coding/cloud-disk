@@ -1,9 +1,7 @@
 const localStore = {
   getItem (key) {
     const value = localStorage.getItem(key)
-    if (value) {
-      return JSON.parse(value)
-    }
+    return value ? JSON.parse(value) : ''
   },
   setItem (key, value) {
     if (value) {

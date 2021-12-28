@@ -1,16 +1,21 @@
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import AuthRoute from './auth'
 import routes from './route.config'
 
 const RouterView = () => {
-  const token = localStorage.getItem('token')
+
   return (
     <Router>
       {
-        routes.map(item =>
-          <Route key={ item.path } {...item}>
-            { (item.path === '/login' || token) ? <item.component /> : <Redirect to="/login" /> }
-          </Route>
-        )
+        routes.map((item) => {
+          return item.path === '/login'
+          ? <Route key={ item.path } {...item}>
+              <item.component />
+            </Route>
+          : <AuthRoute key={ item.path } {...item}>
+              <item.component />
+            </AuthRoute>
+        })
       }
     </Router>
   )
