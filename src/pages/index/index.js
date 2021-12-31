@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Layout, Spin, Breadcrumb } from 'antd'
+import { Layout, Spin, Breadcrumb, Button, Upload, message, notification } from 'antd'
 import './index.scss'
-import { getFileList } from '@/api/index.js'
+import { getFileList, uploadFile } from '@/api/index.js'
 import IconFile from '@/assets/ic_file.png'
 import IconOther from '@/assets/ic_other.png'
 import Table from '@/components/table'
-import { CloudDownloadOutlined, LogoutOutlined, CloudOutlined } from '@ant-design/icons'
+import { CloudDownloadOutlined, LogoutOutlined, CloudOutlined, FolderAddOutlined, CloudUploadOutlined } from '@ant-design/icons'
 import { localStore } from '@/utils/StoreUtils'
 
 const host = 'https://minio.zhangtong.work/yehan/'
@@ -20,6 +20,7 @@ const Index = () => {
   const [tableSource, setTableSource] = useState([])
   const [loading, setLoading] = useState(false)
   const [breadcrumb, setBreadcrumb] = useState(['全部文件'])
+  const [precentStr, setPrecentStr] = useState('0%')
 
   const router = useHistory()
 
@@ -108,6 +109,46 @@ const Index = () => {
     setPrefix(prefixArr && prefixArr.length > 0 ? `${prefixArr.join('/')}/` : '')
   }
 
+  let notiBox = null
+  const handleUploadFile = async (file) => {
+    const formData = new FormData()
+    formData.append('prefix', prefix)
+    formData.append('file', file)
+    showUploadProcess(0)
+    const res = await uploadFile(formData, handleUploadProcess)
+    if (res.code === 200) {
+      message.success(res.message)
+      fetchFileList()
+      if (notiBox) {
+        notification.close(notiBox)
+        notiBox = null
+      }
+    }
+  }
+
+  const handleUploadProcess = ({ loaded, total }) => {
+    setPrecentStr(parseFloat(loaded/total).toFixed(2) + '%')
+    console.log(parseFloat(loaded/total).toFixed(2) + '%')
+  }
+
+  const showUploadProcess = () => {
+    notiBox = notification.info({
+      message: '文件上传中',
+      description: <div>
+        { precentStr }
+      </div>,
+      placement: 'bottomRight',
+      duration: null
+    })
+  }
+
+  const uploadConfig = {
+    showUploadList: false,
+    customRequest({ file }) {
+      handleUploadFile(file)
+    }
+  }
+
   useEffect(() => {
     fetchFileList()
   }, [prefix])
@@ -125,6 +166,12 @@ const Index = () => {
               breadcrumb.map((item, index) => <Breadcrumb.Item className='bread-item' onClick={ () => handleBreadClick(index) }>{ item }</Breadcrumb.Item>)
             }
           </Breadcrumb>
+        </div>
+        <div className='op-btns'>
+          <Upload className='upload-btn' {...uploadConfig}>
+            <Button type="primary" shape="round" icon={ <CloudUploadOutlined /> }>上传</Button>
+          </Upload>,
+          <Button className='new-folder-btn' type="primary" shape="round" icon={ <FolderAddOutlined /> }>新建文件夹</Button>
         </div>
         <div className='logout'>
           <LogoutOutlined onClick={ () => logout() } />

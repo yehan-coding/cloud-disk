@@ -13,6 +13,24 @@ export const getFileList = (data = {}) => {
     }
   })
 }
+
+// 上传文件
+export const uploadFile = (data = {}, fn) => {
+  const { bucketName } = localStore.getItem('user')
+  data.append('bucketName', bucketName || '')
+  return request({
+    timeout: 9999999999,
+    url: '/files/upload',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data,
+    onUploadProgress: function (e) {
+      fn(e)
+    }
+  })
+}
   
 
 // 用户登录

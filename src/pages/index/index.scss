@@ -36,6 +36,19 @@
         }
       }
     }
+    .op-btns {
+      width: 300px;
+      position: absolute;
+      right: 100px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .upload-btn {
+        margin-right: 15px;
+      }
+    }
     .logout {
       cursor: pointer;
       position: absolute;
