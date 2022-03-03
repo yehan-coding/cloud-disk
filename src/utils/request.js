@@ -15,6 +15,7 @@ service.interceptors.request.use(
     return config
   },
   error => {
+    console.log('request', error)
     return Promise.reject(error)
   }
 )
@@ -22,10 +23,17 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const { status, data } = response
+    console.log(response)
     if (status === 200)
     return data
   },
   error => {
+    const { message } = error
+    if (message.includes('403')) {
+      localStore.removeItem('token')
+      localStore.removeItem('user')
+      window.location.href = '/login'
+    }
     return Promise.reject(error)
   }
 )
