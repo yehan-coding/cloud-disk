@@ -19,7 +19,15 @@ const BreadPath = (props) => {
     <div className='breadcrumb-box'>
       <Breadcrumb>
         {
-          breadcrumb.map((item, index) => <Breadcrumb.Item className='bread-item' onClick={ () => handleBreadClick(index) }>{ item }</Breadcrumb.Item>)
+          breadcrumb.map((item, index) =>
+            <Breadcrumb.Item
+              className='bread-item'
+              onClick={ () => handleBreadClick(index) }
+              key={ item + index }
+            >
+              { item }
+            </Breadcrumb.Item>
+          )
         }
       </Breadcrumb>
     </div>

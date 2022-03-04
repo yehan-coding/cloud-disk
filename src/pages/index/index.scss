@@ -60,9 +60,16 @@
   }
   .index-content {
     height: 100%;
-    overflow-y: scroll;
+    overflow: hidden;
     background-color: #fff;
     position: relative;
+    .table-wrap {
+      height: 100%;
+      .table-body {
+        height: calc(100% - 37px);
+        overflow-y: scroll;
+      }
+    }
     .file-name {
       display: flex;
       justify-content: space-between;

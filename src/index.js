@@ -4,8 +4,6 @@ import './index.css';
 import RouterView from '@/router'
 
 ReactDOM.render(
-  <React.StrictMode>
-    <RouterView />
-  </React.StrictMode>,
+  <RouterView />,
   document.getElementById('root')
 )

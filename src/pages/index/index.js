@@ -14,8 +14,12 @@ const Index = () => {
     setPrefix(str)
   }
   
-  const updateTable = () => { // 更新 table 数据
-    mainRef.current.updateFileList()
+  const updateTable = (row) => { // 更新 table 数据
+    if (row && row.name) {
+      mainRef.current.addRowToList(row)
+    } else {
+      mainRef.current.updateFileList()
+    } 
   }
 
   return (

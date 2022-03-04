@@ -1,11 +1,13 @@
-import { Upload, Button } from 'antd'
+import { useState } from 'react'
+import { Upload, Button, Modal, notification, Input } from 'antd'
 import { FolderAddOutlined, CloudUploadOutlined } from '@ant-design/icons'
 import { uploadFile } from '@/api/index.js'
-import { message, notification } from 'antd'
 
 const OptionBtn = (props) => {
 
   const { prefix, updateTable } = props
+  const [showDialog, setShowDialog] = useState(false)
+  const [dirName, setDirName] = useState('新建文件夹')
 
   const uploadConfig = { // 文件上传组件配置项
     showUploadList: false,
@@ -49,12 +51,28 @@ const OptionBtn = (props) => {
     }
   }
 
+  const handleOk = () => {
+    updateTable({
+      id: new Date().getTime() + '',
+      isDir: true,
+      name: dirName
+    })
+    handleCancel()
+  }
+
+  const handleCancel = () => {
+    setShowDialog(false)
+  }
+
   return (
     <div className='op-btns'>
       <Upload className='upload-btn' {...uploadConfig}>
         <Button type="primary" shape="round" icon={ <CloudUploadOutlined /> }>上传</Button>
       </Upload>,
-      <Button className='new-folder-btn' type="primary" shape="round" icon={ <FolderAddOutlined /> }>新建文件夹</Button>
+      <Button className='new-folder-btn' type="primary" shape="round" icon={ <FolderAddOutlined /> } onClick={ () => setShowDialog(true) }>新建文件夹</Button>
+      <Modal title="新建文件夹" visible={ showDialog } onOk={ handleOk } onCancel={ handleCancel }>
+        <Input value={ dirName } onChange={ (e) => setDirName(e.target.value) } />
+      </Modal>
     </div>
   )
 }

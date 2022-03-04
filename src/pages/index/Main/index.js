@@ -1,5 +1,5 @@
 import { useState, useEffect, useImperativeHandle, forwardRef } from 'react'
-import { Layout, Spin } from 'antd'
+import { Layout } from 'antd'
 import Table from '@/components/table'
 import { CloudDownloadOutlined } from '@ant-design/icons'
 import IconFile from '@/assets/ic_file.png'
@@ -18,7 +18,6 @@ const Main = (props, ref) => {
     {
       title: '文件名',
       dataIndex: 'name',
-      key: 'name',
       width: '70%',
       render: (text, { isDir, name, uri }) => {
         return (
@@ -41,13 +40,11 @@ const Main = (props, ref) => {
     {
       title: '大小',
       dataIndex: 'size',
-      key: 'size',
       width: '16%',
     },
     {
       title: '修改时间',
       dataIndex: 'updateDate',
-      key: 'updateDate',
       width: '24%',
     }
   ]
@@ -98,17 +95,20 @@ const Main = (props, ref) => {
   useImperativeHandle(ref, () => ({ // 函数式组件无法直接获取到ref，需要通过 useImperativeHandle 跟 forwardRef 来实现ref
     updateFileList: () => { // 将更新列表的方法通过 ref 抛出给父组件
       fetchFileList()
+    },
+    addRowToList: (row) => {
+      setTableSource([row, ...tableSource])
     }
   }))
 
   return (
     <Layout className="index-content">
-      <Layout.Content>
-        {
-          loading
-            ? <Spin className='loading' size="middle" tip="数据加载中..." />
-            : <Table source={ tableSource } column={ tableColumns } size="small" />
-        }
+      <Layout.Content >
+        <Table
+          loading={ loading }
+          source={ tableSource }
+          column={ tableColumns }
+        />
       </Layout.Content>
     </Layout>
   )
